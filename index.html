@@ -284,7 +284,7 @@
                 const pathArray = window.location.pathname.split('/');
                 const movieId = pathArray[pathArray.length - 1];
 
-				const movieResponse = await fetch(`https://api.themoviedb.org/3/tv/${movieId}?api_key=${TMDB_API_KEY}`);
+				const movieResponse = await fetch(`https://api.themoviedb.org/3/tv/${series_id}?api_key=${TMDB_API_KEY}`);
                 const movie = await movieResponse.json();
 
                 if (movie.success === false) {
@@ -301,19 +301,19 @@
                 movieContent.innerHTML = `
                     <div class="poster-wrapper" onclick="continueWatching()">
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" 
-                             alt="${series.title}" 
-                             class="series-poster"
+                             alt="${movie.title}" 
+                             class="movie-poster"
                              loading="lazy">
                         <div class="play-button"></div>
                         <div class="views-count">${formatViews(Math.floor(Math.random() * 1000000))} views</div>
                     </div>
                     <div class="details">
-                        <h1 class="series-title">${series.title}</h1>
+                        <h1 class="movie-title">${movie.title}</h1>
                         <div class="release-date">Release Date: ${movie.release_date}</div>
                     </div>
                 `;
 
-                document.title = `${series.title}`;
+                document.title = `${movie.title}`;
 
             } catch (error) {
                 console.error('Error fetching movie details:', error);
