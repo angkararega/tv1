@@ -301,19 +301,19 @@
                 movieContent.innerHTML = `
                     <div class="poster-wrapper" onclick="continueWatching()">
                         <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" 
-                             alt="${movie.title}" 
-                             class="movie-poster"
+                             alt="${series.title}" 
+                             class="series-poster"
                              loading="lazy">
                         <div class="play-button"></div>
                         <div class="views-count">${formatViews(Math.floor(Math.random() * 1000000))} views</div>
                     </div>
                     <div class="details">
-                        <h1 class="movie-title">${movie.title}</h1>
+                        <h1 class="series-title">${series.title}</h1>
                         <div class="release-date">Release Date: ${movie.release_date}</div>
                     </div>
                 `;
 
-                document.title = `${movie.title}`;
+                document.title = `${series.title}`;
 
             } catch (error) {
                 console.error('Error fetching movie details:', error);
@@ -383,5 +383,6 @@
 </body>
 
 </html>
+
 
 
