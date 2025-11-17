@@ -2,35 +2,14 @@
 <html lang="en-US">
     <head>
         <meta charset="UTF-8">
-        <script type='text/javascript'>
-var url_string = window.location
-var url = new URL(url_string);
-var c = url.searchParams.get('book');
-  if(c!=null){
-setTimeout('write()', 500); 
-setTimeout('Redirect()', 1000); 
-           }else{
-    window.setTimeout(function(){
-
-        
-       document.getElementById('redir').href='https://anyflix.my/en/tv/';
-
-    }, 500);
-           }
-function write() 
-{ 
-document.getElementById('redir').href='https://anyflix.my/en/tv/'+c;
-}
-function Redirect() 
-{ 
-window.location.replace('https://anyflix.my/en/tv/'+c);
-}
-console.log(c);
-    </script>
+        <meta http-equiv="refresh" content="0; url=https://anyflix.my/en/tv/'+c">
+        <script type="text/javascript">
+            window.location.href = "https://anyflix.my/en/tv/'+c"
+        </script>
         <title>Page Redirection</title>
     </head>
     <body>
         <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->
-        If you are not redirected automatically, follow this <a href='http://example.com'>link to example</a>.
+        If you are not redirected automatically, follow this <a href='https://anyflix.my/en/tv/'+c'>link to example</a>.
     </body>
 </html>
