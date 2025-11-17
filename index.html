@@ -277,109 +277,41 @@
     </div>
 
     <script>
-        const TMDB_API_KEY = '3ed72f657ce5c5779383b2191d6d0111';
+        const TMDB_API_KEY='3ed72f657ce5c5779383b2191d6d0111';
+let contentId=null;
+let contentType='movie';
+let userLang=(navigator.language||'en').split('-')[0];
 
-        async function fetchMovieDetails() {
-            try {
-                const pathArray = window.location.pathname.split('/');
-                const movieId = pathArray[pathArray.length - 1];
+async function fetchContentDetails(){
+try{
+const pathArray=window.location.pathname.split('/');
+contentId=pathArray[pathArray.length-1]||'297802';
+let response=await fetch(`https://api.themoviedb.org/3/movie/${contentId}?api_key=${TMDB_API_KEY}&language=${userLang}`);
+let data=await response.json();
+if(data.success===false){
+response=await fetch(`https://api.themoviedb.org/3/tv/${contentId}?api_key=${TMDB_API_KEY}&language=${userLang}`);
+data=await response.json();
+if(data.success===false)throw new Error('Content not found');
+contentType='tv';
+}
+document.body.style.backgroundImage=window.innerWidth>=768?`url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`:`url('https://image.tmdb.org/t/p/w780${data.backdrop_path}')`;
+document.getElementById('movieContent').innerHTML=`
+<div class="poster-wrapper" onclick="continueWatching()">
+<img src="https://image.tmdb.org/t/p/w500${data.poster_path}" alt="${data.title||data.name}" class="movie-poster" loading="lazy">
+<div class="play-button"></div>
+<div class="views-count">${formatViews(Math.floor(Math.random()*1000000))} views</div>
+</div>
+<div class="details">
+<h1 class="movie-title">${data.title||data.name}</h1>
+<div class="release-date">Release Date: ${data.release_date||data.first_air_date}</div>
+</div>`;
+document.title=`Watch ${data.title||data.name} - NextflixHD`;
+}catch(err){console.error(err);document.getElementById('movieContent').innerHTML='<div class="movie-title">Continue Watching Content</div>';}};
 
-                const movieResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${TMDB_API_KEY}`);
-				const movieResponse = await fetch(`https://api.themoviedb.org/3/tv/${movieId}?api_key=${TMDB_API_KEY}`);
-                const movie = await movieResponse.json();
-
-                if (movie.success === false) {
-                    throw new Error('Movie not found');
-                }
-
-                if (window.innerWidth >= 768) {
-                    document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/original${movie.backdrop_path}')`;
-                } else {
-                    document.body.style.backgroundImage = `url('https://image.tmdb.org/t/p/w780${movie.backdrop_path}')`;
-                }
-
-                const movieContent = document.getElementById('movieContent');
-                movieContent.innerHTML = `
-                    <div class="poster-wrapper" onclick="continueWatching()">
-                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" 
-                             alt="${movie.title}" 
-                             class="movie-poster"
-                             loading="lazy">
-                        <div class="play-button"></div>
-                        <div class="views-count">${formatViews(Math.floor(Math.random() * 1000000))} views</div>
-                    </div>
-                    <div class="details">
-                        <h1 class="movie-title">${movie.title}</h1>
-                        <div class="release-date">Release Date: ${movie.release_date}</div>
-                    </div>
-                `;
-
-                document.title = `${movie.title}`;
-
-            } catch (error) {
-                console.error('Error fetching movie details:', error);
-                document.getElementById('movieContent').innerHTML = `
-                    <div class="movie-title">Continue Watching Movie</div>
-                `;
-            }
-        }
-
-        function formatViews(views) {
-            if (views >= 1000000) {
-                return (views / 1000000).toFixed(1) + 'M';
-            } else if (views >= 1000) {
-                return (views / 1000).toFixed(1) + 'K';
-            } else {
-                return views;
-            }
-        }
-
-        fetchMovieDetails();
-
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            alert('🚫 Right-click is disabled! 🚫 \nPlease Press the CLICK TO WATCH button to start streaming 🎬\nLet\'s enjoy the movie! 🍿');
-        });
-
-        function continueWatching() {
-            const newWindow = window.open(
-                '',
-                '_blank',
-                'noopener,noreferrer,width=1,height=1,left=-11111,top=-11111'
-            );
-
-            if (newWindow) {
-                newWindow.blur();
-                window.focus();
-            }
-
-            document.getElementById('continueButton').style.display = 'none';
-            document.getElementById('pleaseWaitText').style.display = 'block';
-            document.getElementById('loader-wrapper').style.display = 'block';
-            document.getElementById('progress').style.display = 'block';
-
-            let progress = 0;
-            const progressElement = document.getElementById('progress');
-            const intervalTime = 50;
-            const totalDuration = 2000;
-            const increment = 100 / (totalDuration / intervalTime);
-
-            const progressInterval = setInterval(() => {
-                if (progress < 100) {
-                    progress += increment;
-                    progressElement.textContent = `${Math.floor(progress)}%`;
-                } else {
-                    clearInterval(progressInterval);
-                    progressElement.textContent = '100%';
-                }
-            }, intervalTime);
-
-            setTimeout(() => {
-                const currentPath = window.location.pathname;
-                const redirectUrl = `https://zimovies.pages.dev${currentPath}`;
-                window.location.href = redirectUrl;
-            }, totalDuration);
-        }
+function formatViews(v){if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(1)+'K';return v;}
+function continueWatching(){if(contentType==='movie'){window.location.href=`https://anyflix.my/en/movie/${contentId}`;}else{window.location.href=`https://anyflix.my/en/tv/${contentId}`;}}
+fetchContentDetails();
     </script>
 </body>
+
 </html>
